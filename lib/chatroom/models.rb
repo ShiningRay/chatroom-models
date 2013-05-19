@@ -2,16 +2,18 @@ require "ohm"
 require 'multi_json'
 module Chatroom
   class User < Ohm::Model
-    attr_accessor :connection
+    attr_accessor :connection, :subscription
 
     attribute :name, :login
     index :login
     reference :room, :Room
+
     def validate
       assert_present :login
       assert_present :name
       assert_unique :login
     end
+    
     def send_message(*args)
       connection.send MultiJson.dump(args)
     end
@@ -31,18 +33,14 @@ module Chatroom
     set :users, :User
     list :chats, :Chat
 
-    def initialze(name)
-      self.channel = EventMachine::Channel.new
-    end
-
     def join(user)
       users << user
       broadcast(:join, user.login, user.name)
-      channel.subscribe user.method(:send_message)
+      user.subscription = channel.subscribe user, :send_message
     end
 
     def leave(user)
-      channel.unsubscribe user.method(:send_message)
+      channel.unsubscribe user.subscription
       boardcast(:leave, user.login, user.name)
       users.delete(user)
     end

@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Chatroom::Models::VERSION
   gem.authors       = ["ShiningRay"]
   gem.email         = ["tsowly@hotmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Basic models for building a chatroom}
+  gem.summary       = %q{Basic models for building a chatroom}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
@@ -18,5 +18,4 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.add_runtime_dependency "ohm"
   gem.add_runtime_dependency 'multi_json'
-  gem.add_runtime_dependency 'eventmachine'
 end
