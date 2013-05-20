@@ -17,5 +17,5 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
   gem.add_runtime_dependency "ohm"
-  gem.add_runtime_dependency 'multi_json'
+  gem.add_runtime_dependency "ohm-identity_map"
 end
