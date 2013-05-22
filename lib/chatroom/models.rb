@@ -18,7 +18,7 @@ module Chatroom
       #assert_unique :login
     end
     
-    def send_message(*args)
+    def send_message(args)
       connection.send_data args
     end
 
@@ -50,21 +50,23 @@ module Chatroom
       user.room = self
       user.save
 
-      broadcast(:join, user.login, user.name)
+      broadcast([:join, user.login, user.name])
+      user.send_message([:joined, name])
       user.subscription = channel.subscribe user, :send_message
       save
     end
 
     def leave(user)
       channel.unsubscribe user.subscription
-      boardcast(:leave, user.login, user.name)
+      boardcast([:leave, user.login, user.name])
+      user.send_message([:quited, name])
       users.delete(user)
       user.room = nil
       user.save
       save
     end
 
-    def broadcast(*msg)
+    def broadcast(msg)
       channel << msg
     end
 
