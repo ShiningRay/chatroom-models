@@ -5,7 +5,7 @@ module Chatroom
   class Room < Ohm::Model
   end
   class User < Ohm::Model
-    attr_accessor :connection#, :subscription#, :room
+    attr_accessor :connection, :subscription
 
     attribute :name
     attribute :login
@@ -19,15 +19,7 @@ module Chatroom
     end
     
     def send_message(args)
-      connection.send_data args
-    end
-
-    def subscription
-      connection.subscription
-    end
-
-    def subscription=(s)
-      connection.subscription = s
+      connection.send_data args if connection
     end
   end
 
@@ -50,17 +42,17 @@ module Chatroom
       user.room = self
       user.save
 
-      broadcast([:join, user.login, user.name])
-      user.send_message([:joined, name])
+      broadcast(event: :join, source: user.login, room: name)
+      user.send_message(event: :joined, room: name)
       user.subscription = channel.subscribe user, :send_message
       save
     end
 
     def leave(user)
       channel.unsubscribe user.subscription
-      boardcast([:leave, user.login, user.name])
-      user.send_message([:quited, name])
       users.delete(user)
+      broadcast(event: :leave, source: user.login)
+      user.send_message(event: :info, data: [:quited, name])
       user.room = nil
       user.save
       save
